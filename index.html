@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EG-FR-2026-001 — Installment Payment Additions</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Inter', system-ui, sans-serif; font-size: 14px; color: #1a1a2e; background: #f9f9fb; padding: 40px 20px; line-height: 1.6; }
+  .page { max-width: 860px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 2px 24px rgba(0,0,0,0.07); overflow: hidden; }
+
+  /* Header */
+  .doc-header { background: #1a1a2e; color: #fff; padding: 36px 48px 32px; }
+  .doc-tag { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #9B84F5; margin-bottom: 10px; }
+  .doc-title { font-size: 28px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 6px; }
+  .doc-sub { font-size: 14px; color: rgba(255,255,255,0.55); margin-bottom: 24px; }
+  .meta-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; background: rgba(255,255,255,0.06); border-radius: 8px; padding: 16px 20px; }
+  .meta-item label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: rgba(255,255,255,0.4); display: block; margin-bottom: 4px; }
+  .meta-item span { font-size: 12.5px; color: #fff; font-weight: 500; }
+
+  /* Notice banner */
+  .notice { background: #FFF8E7; border-left: 4px solid #F59E0B; padding: 14px 20px; margin: 28px 48px; border-radius: 0 6px 6px 0; font-size: 13px; color: #78350F; line-height: 1.55; }
+  .notice strong { color: #92400E; }
+
+  /* Body */
+  .body { padding: 0 48px 48px; }
+  .section-intro { padding: 32px 0 20px; border-bottom: 2px solid #e8e8f0; margin-bottom: 32px; }
+  .section-intro h2 { font-size: 20px; font-weight: 800; color: #1a1a2e; margin-bottom: 8px; }
+  .section-intro p { font-size: 13.5px; color: #555; max-width: 680px; }
+
+  /* Scenario cards */
+  .scenario { margin-bottom: 48px; }
+  .scenario-badge { display: inline-flex; align-items: center; gap: 8px; background: #1a1a2e; color: #9B84F5; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; padding: 4px 12px; border-radius: 99px; margin-bottom: 14px; }
+  .scenario h3 { font-size: 17px; font-weight: 800; color: #1a1a2e; margin-bottom: 16px; letter-spacing: -0.01em; }
+
+  /* Meta strip */
+  .trigger-strip { background: #f5f5fa; border: 1px solid #e0e0ee; border-radius: 8px; padding: 14px 18px; margin-bottom: 20px; font-size: 12.5px; color: #555; }
+  .trigger-strip strong { color: #1a1a2e; }
+  .kv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 10px; margin-top: 12px; }
+  .kv { background: #fff; border: 1px solid #e0e0ee; border-radius: 6px; padding: 10px 14px; }
+  .kv label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #9B84F5; display: block; margin-bottom: 3px; }
+  .kv span { font-size: 13px; font-weight: 600; color: #1a1a2e; }
+
+  /* Invoice */
+  .inv-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #9B84F5; margin-bottom: 10px; display: block; }
+  .invoice { border: 1.5px solid #e0e0ee; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+  .inv-head { background: #1a1a2e; color: #fff; padding: 14px 20px; display: flex; justify-content: space-between; align-items: baseline; }
+  .inv-head .brand { font-size: 13px; font-weight: 700; color: #9B84F5; }
+  .inv-head .inv-num { font-size: 12px; color: rgba(255,255,255,0.6); }
+  .inv-date { font-size: 11px; color: rgba(255,255,255,0.4); }
+  .inv-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .inv-table th { background: #f5f5fa; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #888; padding: 8px 16px; text-align: left; border-bottom: 1px solid #e8e8f0; }
+  .inv-table th:last-child { text-align: right; }
+  .inv-table td { padding: 10px 16px; border-bottom: 1px solid #f0f0f5; color: #1a1a2e; vertical-align: top; }
+  .inv-table td:last-child { text-align: right; font-weight: 600; white-space: nowrap; }
+  .inv-table tr:last-child td { border-bottom: none; }
+  .indent { font-size: 12px; color: #666; padding-left: 28px !important; }
+  .indent .arrow { color: #9B84F5; margin-right: 6px; }
+  .neg { color: #DC2626; }
+  .pos { color: #059669; }
+  .inv-totals { background: #f9f9fb; border-top: 1.5px solid #e0e0ee; padding: 14px 16px; }
+  .totals-table { width: 100%; font-size: 13px; border-collapse: collapse; }
+  .totals-table td { padding: 4px 0; }
+  .totals-table td:last-child { text-align: right; font-weight: 600; }
+  .totals-table .subtotal-row td { color: #555; }
+  .totals-table .discount-row td { color: #DC2626; }
+  .totals-table .fee-row td { color: #059669; }
+  .totals-table .post-disc-row td { color: #555; border-top: 1px dashed #e0e0ee; padding-top: 8px; }
+  .totals-table .total-row td { font-size: 15px; font-weight: 800; color: #1a1a2e; border-top: 1.5px solid #1a1a2e; padding-top: 10px; margin-top: 6px; }
+
+  /* Payment schedule table */
+  .schedule-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .schedule-table th { background: #EDE9FF; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #6246EA; padding: 8px 16px; text-align: left; border-bottom: 1px solid #D4C9FA; }
+  .schedule-table th:last-child { text-align: right; }
+  .schedule-table td { padding: 10px 16px; border-bottom: 1px solid #f0f0f5; color: #1a1a2e; }
+  .schedule-table td:last-child { text-align: right; font-weight: 700; }
+  .schedule-table tr:last-child td { border-bottom: none; }
+  .badge-due { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 99px; }
+  .badge-due.now { background: #DCFCE7; color: #15803D; }
+  .badge-due.later { background: #EDE9FF; color: #6246EA; }
+
+  /* QB table */
+  .qb-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 12px; }
+  .qb-table th { background: #FFF8E7; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: #D97706; padding: 8px 16px; text-align: left; border-bottom: 1px solid #FDE68A; }
+  .qb-table th:last-child { text-align: right; }
+  .qb-table td { padding: 9px 16px; border-bottom: 1px solid #f0f0f5; color: #1a1a2e; }
+  .qb-table td:last-child { text-align: right; font-weight: 600; }
+  .qb-table tr:last-child td { border-bottom: none; }
+  .tick { color: #059669; font-weight: 700; margin-right: 6px; }
+  .note { font-size: 12.5px; color: #555; background: #f5f5fa; border-radius: 6px; padding: 10px 14px; margin-top: 8px; line-height: 1.55; }
+
+  /* Open decisions */
+  .od-card { border: 1.5px solid #FDE68A; border-radius: 10px; overflow: hidden; margin-bottom: 20px; }
+  .od-head { background: #FFF8E7; padding: 12px 18px; display: flex; align-items: center; justify-content: space-between; }
+  .od-id { font-size: 12px; font-weight: 800; color: #D97706; }
+  .od-owner { font-size: 11px; color: #92400E; background: #FEF3C7; border-radius: 99px; padding: 2px 10px; font-weight: 600; }
+  .od-body { padding: 14px 18px; font-size: 13px; color: #444; line-height: 1.6; }
+  .od-body h4 { font-size: 14px; font-weight: 700; color: #1a1a2e; margin-bottom: 8px; }
+
+  /* Divider */
+  .divider { border: none; border-top: 1.5px solid #e8e8f0; margin: 36px 0; }
+
+  /* Footer */
+  .doc-footer { background: #f5f5fa; padding: 16px 48px; font-size: 11.5px; color: #aaa; display: flex; justify-content: space-between; border-top: 1px solid #e8e8f0; }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div class="doc-tag">Addendum to EG-FR-2026-001</div>
+    <div class="doc-title">Installment Payment Architecture</div>
+    <div class="doc-sub">Invoice display rules, calculation order, and QuickBooks mapping for installment payment scenarios</div>
+    <div class="meta-grid">
+      <div class="meta-item"><label>Parent Doc</label><span>EG-FR-2026-001 v1.0</span></div>
+      <div class="meta-item"><label>Status</label><span>Draft — Pending Review</span></div>
+      <div class="meta-item"><label>Author</label><span>Derek Manuel</span></div>
+      <div class="meta-item"><label>Date</label><span>April 25, 2026</span></div>
+    </div>
+  </div>
+
+  <!-- NOTICE -->
+  <div class="notice">
+    <strong>Addendum scope:</strong> This document extends EG-FR-2026-001 with installment payment scenarios (I-Series) and two additional Open Decisions (OD-05, OD-06). All guiding principles from the parent document apply. New QB mapping rows are appended to the existing QB Mapping Summary table. Read in conjunction with EG-FR-2026-001.
+  </div>
+
+  <div class="body">
+
+    <!-- SECTION INTRO -->
+    <div class="section-intro">
+      <h2>Installment Payment Scenarios (I-Series)</h2>
+      <p>Installment Payments allow an exhibitor to split their final invoice total into multiple payments. The discount and fee architecture established in EG-FR-2026-001 is unaffected — installments operate as a final step after all pricing rules have resolved. The calculation order for any order with installments active is:</p>
+      <p style="margin-top:12px;background:#f5f5fa;border-radius:8px;padding:14px 18px;font-size:13px;font-weight:600;color:#1a1a2e;">
+        (1) Sum products &nbsp;→&nbsp; (2) Apply discount &nbsp;→&nbsp; (3) Calculate fee on post-discount total &nbsp;→&nbsp; (4) Determine final total &nbsp;→&nbsp; (5) Split into installments
+      </p>
+      <p style="margin-top:14px;">Installment Payments and Payment Method <em>Discounts</em> are mutually exclusive — they cannot be active on the same event simultaneously. Payment Method <em>Fees</em> (e.g. credit card processing) are compatible with installments and appear as a line item before the total is split.</p>
+    </div>
+
+    <!-- I1 -->
+    <div class="scenario">
+      <div class="scenario-badge">I1</div>
+      <h3>Simple Installment — No Discount, No Fee</h3>
+
+      <div class="trigger-strip">
+        <strong>Trigger:</strong> Installment Payments enabled, no discount code applied, no fee rule active
+        <div class="kv-grid">
+          <div class="kv"><label>Installments</label><span>2 payments</span></div>
+          <div class="kv"><label>Split</label><span>50 / 50</span></div>
+          <div class="kv"><label>1st Payment</label><span>Due at checkout</span></div>
+          <div class="kv"><label>2nd Payment</label><span>Due on invoice</span></div>
+        </div>
+      </div>
+
+      <span class="inv-label">ExpoGenie Invoice — Exhibitor View</span>
+      <div class="invoice">
+        <div class="inv-head">
+          <span class="brand">ExpoGenie</span>
+          <div style="text-align:right"><div class="inv-num">Invoice #10440</div><div class="inv-date">Order Date: Apr 25, 2026</div></div>
+        </div>
+        <table class="inv-table">
+          <thead><tr><th>Description</th><th>List Price</th><th>Amount</th></tr></thead>
+          <tbody>
+            <tr><td>Booth 100</td><td>$1,000.00</td><td>$1,000.00</td></tr>
+            <tr><td>Booth Staff Pass</td><td>$200.00</td><td>$200.00</td></tr>
+          </tbody>
+        </table>
+        <div class="inv-totals">
+          <table class="totals-table">
+            <tr class="subtotal-row"><td>Subtotal</td><td>$1,200.00</td></tr>
+            <tr class="total-row"><td>Total Due</td><td>$1,200.00</td></tr>
+          </table>
+        </div>
+        <!-- Payment Schedule -->
+        <div style="padding:0 0 0 0;">
+          <table class="schedule-table">
+            <thead><tr><th>Payment Schedule</th><th>Amount</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Payment 1 of 2</strong><br/><span style="font-size:12px;color:#666;">Due at checkout — April 25, 2026</span></td>
+                <td>$600.00</td>
+                <td><span class="badge-due now">Due Now</span></td>
+              </tr>
+              <tr>
+                <td><strong>Payment 2 of 2</strong><br/><span style="font-size:12px;color:#666;">Invoiced separately</span></td>
+                <td>$600.00</td>
+                <td><span class="badge-due later">Pending</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <span class="inv-label" style="margin-top:16px;">QuickBooks — Line Items</span>
+      <table class="qb-table">
+        <thead><tr><th>QB Product / Service</th><th>Amount</th></tr></thead>
+        <tbody>
+          <tr><td>Booth 100</td><td>$1,000.00</td></tr>
+          <tr><td>Booth Staff Pass</td><td>$200.00</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><span class="tick">✓</span> QB records the full invoice total at order creation ($1,200.00). Individual installment receipts are matched against this invoice record as payments are collected. No additional QB line items are created for the payment schedule itself.</div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- I2 -->
+    <div class="scenario">
+      <div class="scenario-badge">I2</div>
+      <h3>Discount + Installments — Discount Applied Before Split</h3>
+
+      <div class="trigger-strip">
+        <strong>Trigger:</strong> Discount code applied at checkout, installment payments enabled, exhibitor splits 50/50
+        <div class="kv-grid">
+          <div class="kv"><label>Discount Code</label><span>100offcart</span></div>
+          <div class="kv"><label>Discount</label><span>$100.00 off cart</span></div>
+          <div class="kv"><label>Net Total</label><span>$1,100.00</span></div>
+          <div class="kv"><label>Installments</label><span>2 × $550.00</span></div>
+        </div>
+      </div>
+
+      <span class="inv-label">ExpoGenie Invoice — Exhibitor View</span>
+      <div class="invoice">
+        <div class="inv-head">
+          <span class="brand">ExpoGenie</span>
+          <div style="text-align:right"><div class="inv-num">Invoice #10441</div><div class="inv-date">Order Date: Apr 25, 2026</div></div>
+        </div>
+        <table class="inv-table">
+          <thead><tr><th>Description</th><th>List Price</th><th>Amount</th></tr></thead>
+          <tbody>
+            <tr><td>Booth 100</td><td>$1,000.00</td><td>$1,000.00</td></tr>
+            <tr><td>Booth Staff Pass</td><td>$200.00</td><td>$200.00</td></tr>
+            <tr>
+              <td class="indent"><span class="arrow">↳</span>Cart Discount — Code: 100offcart<br/><span style="font-size:11px;color:#999;">Applied to: Entire Order</span></td>
+              <td>—</td>
+              <td class="neg">−$100.00</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="inv-totals">
+          <table class="totals-table">
+            <tr class="subtotal-row"><td>Subtotal</td><td>$1,200.00</td></tr>
+            <tr class="discount-row"><td>Discount</td><td>−$100.00</td></tr>
+            <tr class="total-row"><td>Total Due</td><td>$1,100.00</td></tr>
+          </table>
+        </div>
+        <table class="schedule-table">
+          <thead><tr><th>Payment Schedule</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Payment 1 of 2</strong><br/><span style="font-size:12px;color:#666;">Due at checkout — April 25, 2026</span></td>
+              <td>$550.00</td>
+              <td><span class="badge-due now">Due Now</span></td>
+            </tr>
+            <tr>
+              <td><strong>Payment 2 of 2</strong><br/><span style="font-size:12px;color:#666;">Invoiced separately</span></td>
+              <td>$550.00</td>
+              <td><span class="badge-due later">Pending</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <span class="inv-label" style="margin-top:16px;">QuickBooks — Line Items</span>
+      <table class="qb-table">
+        <thead><tr><th>QB Product / Service</th><th>Amount</th></tr></thead>
+        <tbody>
+          <tr><td>Booth 100</td><td>$1,000.00</td></tr>
+          <tr><td>Booth Staff Pass</td><td>$200.00</td></tr>
+          <tr><td>Promo Code Discount</td><td class="neg">−$100.00</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><span class="tick">✓</span> QB records full product prices and the discount as separate line items. Net QB total = $1,100.00. Payment schedule is not reflected in QB line items — installment receipts are matched to this invoice as they are collected. The discount is never split or allocated across payments.</div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- I3 -->
+    <div class="scenario">
+      <div class="scenario-badge">I3</div>
+      <h3>Fee + Installments — Fee Included in Split</h3>
+
+      <div class="trigger-strip">
+        <strong>Trigger:</strong> Credit card processing fee active (3%), no discount, installment payments enabled 50/50
+        <div class="kv-grid">
+          <div class="kv"><label>Fee</label><span>CC Processing Fee</span></div>
+          <div class="kv"><label>Fee Rate</label><span>3% of total</span></div>
+          <div class="kv"><label>Fee Amount</label><span>$36.00</span></div>
+          <div class="kv"><label>Grand Total</label><span>$1,236.00</span></div>
+          <div class="kv"><label>Installments</label><span>2 × $618.00</span></div>
+        </div>
+      </div>
+
+      <span class="inv-label">ExpoGenie Invoice — Exhibitor View</span>
+      <div class="invoice">
+        <div class="inv-head">
+          <span class="brand">ExpoGenie</span>
+          <div style="text-align:right"><div class="inv-num">Invoice #10442</div><div class="inv-date">Order Date: Apr 25, 2026</div></div>
+        </div>
+        <table class="inv-table">
+          <thead><tr><th>Description</th><th>List Price</th><th>Amount</th></tr></thead>
+          <tbody>
+            <tr><td>Booth 100</td><td>$1,000.00</td><td>$1,000.00</td></tr>
+            <tr><td>Booth Staff Pass</td><td>$200.00</td><td>$200.00</td></tr>
+            <tr>
+              <td>Credit Card Processing Fee (3%)<br/><span style="font-size:11px;color:#999;">Applied to: $1,200.00 order total · 3% × $1,200.00</span></td>
+              <td>—</td>
+              <td class="pos">$36.00</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="inv-totals">
+          <table class="totals-table">
+            <tr class="subtotal-row"><td>Subtotal</td><td>$1,200.00</td></tr>
+            <tr class="fee-row"><td>CC Processing Fee (3%)</td><td>+$36.00</td></tr>
+            <tr class="total-row"><td>Total Due</td><td>$1,236.00</td></tr>
+          </table>
+        </div>
+        <table class="schedule-table">
+          <thead><tr><th>Payment Schedule</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Payment 1 of 2</strong><br/><span style="font-size:12px;color:#666;">Due at checkout — April 25, 2026</span></td>
+              <td>$618.00</td>
+              <td><span class="badge-due now">Due Now</span></td>
+            </tr>
+            <tr>
+              <td><strong>Payment 2 of 2</strong><br/><span style="font-size:12px;color:#666;">Invoiced separately</span></td>
+              <td>$618.00</td>
+              <td><span class="badge-due later">Pending</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <span class="inv-label" style="margin-top:16px;">QuickBooks — Line Items</span>
+      <table class="qb-table">
+        <thead><tr><th>QB Product / Service</th><th>Amount</th></tr></thead>
+        <tbody>
+          <tr><td>Booth 100</td><td>$1,000.00</td></tr>
+          <tr><td>Booth Staff Pass</td><td>$200.00</td></tr>
+          <tr><td>Credit Card Processing Fee</td><td class="pos">$36.00</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><span class="tick">✓</span> The fee is included in the grand total before the split. Both installments include a proportional share of the fee automatically — no separate fee allocation is needed. QB net = $1,236.00.</div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- I4 -->
+    <div class="scenario">
+      <div class="scenario-badge">I4</div>
+      <h3>Discount + Fee + Installments — Full Combined Scenario</h3>
+
+      <div class="trigger-strip">
+        <strong>Trigger:</strong> Discount code applied, CC processing fee active, installment payments enabled 50/50. Calculation order: discount first, fee on post-discount total, then split.
+        <div class="kv-grid">
+          <div class="kv"><label>Discount</label><span>$100.00 off cart</span></div>
+          <div class="kv"><label>Post-Discount</label><span>$1,100.00</span></div>
+          <div class="kv"><label>Fee (3%)</label><span>$33.00</span></div>
+          <div class="kv"><label>Grand Total</label><span>$1,133.00</span></div>
+          <div class="kv"><label>Installments</label><span>2 × $566.50</span></div>
+        </div>
+      </div>
+
+      <span class="inv-label">ExpoGenie Invoice — Exhibitor View</span>
+      <div class="invoice">
+        <div class="inv-head">
+          <span class="brand">ExpoGenie</span>
+          <div style="text-align:right"><div class="inv-num">Invoice #10443</div><div class="inv-date">Order Date: Apr 25, 2026</div></div>
+        </div>
+        <table class="inv-table">
+          <thead><tr><th>Description</th><th>List Price</th><th>Amount</th></tr></thead>
+          <tbody>
+            <tr><td>Booth 100</td><td>$1,000.00</td><td>$1,000.00</td></tr>
+            <tr><td>Booth Staff Pass</td><td>$200.00</td><td>$200.00</td></tr>
+            <tr>
+              <td class="indent"><span class="arrow">↳</span>Cart Discount — Code: 100offcart<br/><span style="font-size:11px;color:#999;">Applied to: Entire Order</span></td>
+              <td>—</td>
+              <td class="neg">−$100.00</td>
+            </tr>
+            <tr>
+              <td>Credit Card Processing Fee (3%)<br/><span style="font-size:11px;color:#999;">Applied to: $1,100.00 post-discount total · 3% × $1,100.00</span></td>
+              <td>—</td>
+              <td class="pos">$33.00</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="inv-totals">
+          <table class="totals-table">
+            <tr class="subtotal-row"><td>Subtotal</td><td>$1,200.00</td></tr>
+            <tr class="discount-row"><td>Discount</td><td>−$100.00</td></tr>
+            <tr class="post-disc-row"><td>Post-Discount Total</td><td>$1,100.00</td></tr>
+            <tr class="fee-row"><td>CC Processing Fee (3%)</td><td>+$33.00</td></tr>
+            <tr class="total-row"><td>Total Due</td><td>$1,133.00</td></tr>
+          </table>
+        </div>
+        <table class="schedule-table">
+          <thead><tr><th>Payment Schedule</th><th>Amount</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Payment 1 of 2</strong><br/><span style="font-size:12px;color:#666;">Due at checkout — April 25, 2026</span></td>
+              <td>$566.50</td>
+              <td><span class="badge-due now">Due Now</span></td>
+            </tr>
+            <tr>
+              <td><strong>Payment 2 of 2</strong><br/><span style="font-size:12px;color:#666;">Invoiced separately</span></td>
+              <td>$566.50</td>
+              <td><span class="badge-due later">Pending</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <span class="inv-label" style="margin-top:16px;">QuickBooks — Line Items</span>
+      <table class="qb-table">
+        <thead><tr><th>QB Product / Service</th><th>Amount</th></tr></thead>
+        <tbody>
+          <tr><td>Booth 100</td><td>$1,000.00</td></tr>
+          <tr><td>Booth Staff Pass</td><td>$200.00</td></tr>
+          <tr><td>Promo Code Discount</td><td class="neg">−$100.00</td></tr>
+          <tr><td>Credit Card Processing Fee</td><td class="pos">$33.00</td></tr>
+        </tbody>
+      </table>
+      <div class="note"><span class="tick">✓</span> Four clean QB line items. Full product revenue preserved. Discount and fee each have their own QB product. Fee is calculated on the post-discount total per Principle P4. QB net = $1,133.00. Installment schedule is not reflected in QB line items — matched as payments are received.</div>
+    </div>
+
+    <hr class="divider"/>
+
+    <!-- QB MAPPING ADDENDUM -->
+    <div class="section-intro" style="margin-bottom:24px;">
+      <h2>QB Mapping Additions</h2>
+      <p>The following rows extend the QuickBooks Mapping Summary table in Section 7 of EG-FR-2026-001. No new QB products are required for installment payments — the payment schedule is tracked as payment receipts against the existing invoice record.</p>
+    </div>
+
+    <table class="qb-table" style="margin-bottom:12px;">
+      <thead>
+        <tr>
+          <th>Line Item Type</th>
+          <th>ExpoGenie Invoice Label</th>
+          <th>QB Product / Service</th>
+          <th>Sign</th>
+          <th>Who Configures</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Installment payment receipt</td>
+          <td>"Payment 1 of N received"</td>
+          <td>No new QB product — applied as payment receipt against existing invoice</td>
+          <td>N/A</td>
+          <td>Automatic — ExpoGenie records receipt on QB invoice</td>
+        </tr>
+        <tr>
+          <td>Installment payment schedule</td>
+          <td>Payment schedule table on invoice</td>
+          <td>Not a QB line item — display only on ExpoGenie invoice</td>
+          <td>N/A</td>
+          <td>Display generated by ExpoGenie at order creation</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <hr class="divider"/>
+
+    <!-- OPEN DECISIONS -->
+    <div class="section-intro" style="margin-bottom:24px;">
+      <h2>New Open Decisions</h2>
+      <p>The following open decisions are added to the parent document's OD tracker and require resolution before e2e development on Installment Payments begins.</p>
+    </div>
+
+    <div class="od-card">
+      <div class="od-head">
+        <span class="od-id">OD-05</span>
+        <span class="od-owner">Derek + Dominica to Confirm</span>
+      </div>
+      <div class="od-body">
+        <h4>Rounding on Uneven Installment Splits</h4>
+        <p>When a total does not divide evenly across installments (e.g. $1,133.00 ÷ 2 = $566.50 — this case is clean, but $1,100.00 ÷ 3 = $366.666...), the system must decide how to handle the fractional cent. Two options: <strong>(A)</strong> Round each installment down and add the remainder to the final payment (e.g. 3 × $366.66 + $0.02 added to last = $366.68 final). <strong>(B)</strong> Round all installments to the nearest cent and allow the final payment to absorb any difference. Option A is the most common practice and is recommended — it ensures the first payment is never inflated. Dominica to confirm QB treatment of the minor variance on the last payment.</p>
+      </div>
+    </div>
+
+    <div class="od-card">
+      <div class="od-head">
+        <span class="od-id">OD-06</span>
+        <span class="od-owner">Derek + E2E to Confirm</span>
+      </div>
+      <div class="od-body">
+        <h4>Installment Payment Method Constraint</h4>
+        <p>The admin can configure which payment methods are available for installment payments (Credit Card, Invoice/Pay Later, or both). If the exhibitor selects Credit Card for installments, does the CC processing fee apply to each individual installment payment as it is charged, or to the full order total once at checkout? These produce different amounts when the fee is percentage-based. Recommended approach: calculate the fee on the full order total at checkout (as shown in I3 and I4), apply it as a single line item, and include it in the split. This avoids re-calculating the fee on each future payment and keeps the invoice clean. E2E to confirm feasibility with the payment gateway integration.</p>
+      </div>
+    </div>
+
+  </div><!-- /body -->
+
+  <div class="doc-footer">
+    <span>EG-FR-2026-001 Addendum — Installment Payment Architecture — v1.0</span>
+    <span>ExpoGenie © 2026 — Confidential</span>
+  </div>
+
+</div>
+</body>
+</html>
